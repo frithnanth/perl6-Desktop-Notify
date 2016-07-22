@@ -37,6 +37,7 @@ sub notify_notification_set_category(NotifyNotification $notification, Str $cate
 sub notify_notification_set_urgency(NotifyNotification $notification, int64 $urgency)
                             is native(LIB) { * }
 
+has GError $.error is rw;
 submethod BUILD(:$app-name!) { notify_init($app-name) };
 submethod DESTROY { notify_uninit() };
 method is-initted(--> Bool) { notify_is_initted.Bool }
@@ -46,9 +47,9 @@ method new-notification(Str $summary, Str $body, Str $icon --> NotifyNotificatio
 {
   notify_notification_new($summary, $body, $icon);
 }
-method show-notification(NotifyNotification $notification, GError $error is rw --> Bool)
+method show-notification(NotifyNotification $notification --> Bool)
 {
-  notify_notification_show($notification, $error).Bool;
+  notify_notification_show($notification, $!error).Bool;
 }
 # typedef unsigned long gsize;
 # typedef gsize GType;

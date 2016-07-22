@@ -17,12 +17,11 @@ $notify.app-name('testtwo');
 is $notify.app-name, 'testtwo', 'writing app name';
 
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
-my $error = Desktop::Notify::GError.new;
 
 is $n.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification';
-is $error.WHAT, Desktop::Notify::GError, 'creating a GError';
+is $notify.error.WHAT, Desktop::Notify::GError, 'reading a GError';
 if AUTHOR {
-  ok $notify.show-notification($n, $error), 'showing the notification';
+  ok $notify.show-notification($n), 'showing the notification';
   # Does it show on screen? :-)
   sleep 1;
 }else{
@@ -31,7 +30,7 @@ if AUTHOR {
 
 ok $notify.update-notification($n, 'Oh well!', 'Not quite a disaster!', 'stop'), 'changing the message';
 if AUTHOR {
-  ok $notify.show-notification($n, $error), 'showing the modified message';
+  ok $notify.show-notification($n), 'showing the modified message';
 }else{
   skip 'skip showing the notification', 1;
 }
