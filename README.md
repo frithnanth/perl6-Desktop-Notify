@@ -48,10 +48,10 @@ Creates a new notification. It takes three **mandatory** arguments: the summary
 string, the notification string and the icon to display (See the libnotify
 documentation for the available icons).
 
-#### show-notification(NotifyNotification $notification, GError $error is rw --> Bool)
+#### show-notification(NotifyNotification $notification --> Bool)
 
-Shows the notification on screen. It takes two arguments, the NotifyNotification
-object and the GError object. The status is returned in the GError object.
+Shows the notification on screen. It takes one argument, the NotifyNotification
+object.
 
 #### get-type(--> Int)
 
