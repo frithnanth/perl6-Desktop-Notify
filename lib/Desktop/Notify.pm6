@@ -6,13 +6,14 @@ use NativeCall;
 
 constant LIB = %*ENV<PERL6_NOTIFY_LIB> || 'libnotify.so.4';
 
-class NotifyNotification is repr('CPointer') { * } # Private struct
+class NotifyNotification is repr('CPointer') { * } # libnotify private struct
 class GError is repr('CStruct') {
   has int64 $.domain;
   has int32 $.code;
   has Str   $.message;
 }
 
+# Raw interface to libnotify
 sub notify_init(Str $appname --> int64) is native(LIB) { * }
 sub notify_uninit() is native(LIB) { * }
 sub notify_is_initted(--> int64) is native(LIB) { * }
@@ -23,6 +24,10 @@ sub notify_notification_new(Str $summary,
                             Str $icon --> NotifyNotification)
                             is native(LIB) { * }
 sub notify_notification_show(NotifyNotification $notification, GError $error is rw --> int64)
+                            is native(LIB) { * }
+sub notify_notification_close(NotifyNotification $notification, GError $error is rw --> int64)
+                            is native(LIB) { * }
+sub notify_notification_get_closed_reason(NotifyNotification $notification --> int64)
                             is native(LIB) { * }
 sub notify_notification_get_type(--> uint64) is native(LIB) { * }
 sub notify_notification_update(NotifyNotification $notification,
@@ -37,6 +42,7 @@ sub notify_notification_set_category(NotifyNotification $notification, Str $cate
 sub notify_notification_set_urgency(NotifyNotification $notification, int64 $urgency)
                             is native(LIB) { * }
 
+# OO interface
 has GError $.error is rw;
 submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
@@ -47,18 +53,19 @@ method new-notification(Str $summary, Str $body, Str $icon --> NotifyNotificatio
 {
   notify_notification_new($summary, $body, $icon);
 }
-method show-notification(NotifyNotification $notification --> Bool)
+method show(NotifyNotification $notification --> Bool)
 {
   notify_notification_show($notification, $!error).Bool;
 }
-# typedef unsigned long gsize;
-# typedef gsize GType;
-# GType notify_notification_get_type(void);
+method close(NotifyNotification $notification --> Bool)
+{
+  notify_notification_close($notification, $!error).Bool;
+}
 method get-type(--> Int)
 {
   notify_notification_get_type();
 }
-method update-notification(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
+method update(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
 {
   notify_notification_update($notification, $summary, $body, $icon).Bool;
 }
@@ -77,9 +84,14 @@ method set-urgency(NotifyNotification $notification, NotifyUrgency $urgency)
 {
   notify_notification_set_urgency($notification, $urgency);
 }
+method why-closed(NotifyNotification $notification --> Int)
+{
+  notify_notification_get_closed_reason($notification);
+}
 
 
 
+=begin comment
 # TODO
 sub notify_get_server_info(Pointer[Str] $name,
                            Pointer[Str] $vendor,
@@ -98,3 +110,12 @@ class GList is repr('CStruct') {
 #  has Pointer[GList] $.prev;
 }
 sub notify_get_server_caps(--> GList) is native(LIB) { * }
+
+NotifyActionCallback
+notify_notification_set_image_from_pixbuf
+notify_notification_set_hint
+notify_notification_clear_hints
+notify_notification_add_action
+notify_notification_clear_actions
+
+=end comment

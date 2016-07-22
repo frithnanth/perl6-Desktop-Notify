@@ -1,7 +1,7 @@
 ## Desktop::Notify
 
-Desktop::Notify is a set of simple bindings to libnotify using NativeCall. Only
-a few function calls are currently implemented, however these are enough to
+Desktop::Notify is a set of simple bindings to libnotify using NativeCall. Some
+function calls are not currently implemented, however these are enough to
 create and display notifications.
 
 ## Example
@@ -15,12 +15,12 @@ my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
 
 $notify.set-timeout($n, NOTIFY_EXPIRES_NEVER);
 
-$notify.show-notification($n);
+$notify.show($n);
 sleep 2;
 
-$notify.update-notification($n, 'Oh well!', 'Not quite a disaster!', 'stop');
+$notify.update($n, 'Oh well!', 'Not quite a disaster!', 'stop');
 
-$notify.show-notification($n);
+$notify.show($n);
 ```
 
 If you're trying this code, note that the notification doesn't fade by itself,
@@ -48,16 +48,27 @@ Creates a new notification. It takes three **mandatory** arguments: the summary
 string, the notification string and the icon to display (See the libnotify
 documentation for the available icons).
 
-#### show-notification(NotifyNotification $notification --> Bool)
+#### show(NotifyNotification $notification --> Bool)
 
 Shows the notification on screen. It takes one argument, the NotifyNotification
 object.
+
+#### close(NotifyNotification $notification --> Bool)
+
+Closes the notification. It takes one argument, the NotifyNotification
+object. (useful for example if the timeout was set to `NOTIFY_EXPIRES_NEVER`)
+
+#### why-closed(NotifyNotification $notification --> Int)
+
+Returns the the closed reason code for the notification. It takes one argument,
+the NotifyNotification object. (See the libnotify documentation for the meaning of
+this code)
 
 #### get-type(--> Int)
 
 Returns the notification type.
 
-#### update-notification(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
+#### update(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
 
 Modifies the messages of a notification which is already on screen.
 

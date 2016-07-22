@@ -23,18 +23,24 @@ is $notify.error.WHAT, Desktop::Notify::GError, "it's a GError";
 is $notify.error.domain, 0, "reading error domain";
 is $notify.error.code, 0, "reading error code";
 if AUTHOR {
-  ok $notify.show-notification($n), 'showing the notification';
+  ok $notify.show($n), 'showing the notification';
   # Does it show on screen? :-)
   sleep 1;
 }else{
-  skip 'skip showing the notification', 1;
+  skip 'showing the notification', 1;
 }
 
-ok $notify.update-notification($n, 'Oh well!', 'Not quite a disaster!', 'stop'), 'changing the message';
+ok $notify.update($n, 'Oh well!', 'Not quite a disaster!', 'stop'), 'changing the message';
 if AUTHOR {
-  ok $notify.show-notification($n), 'showing the modified message';
+  ok $notify.show($n), 'showing updated notification';
+  sleep 1;
 }else{
-  skip 'skip showing the notification', 1;
+  skip 'showing updated notification', 1;
+}
+if AUTHOR {
+  ok $notify.close($n), 'closing the notification';
+}else{
+  skip 'closing the notification', 1;
 }
 
 is $notify.get-type.WHAT, Int, 'get-type method';
