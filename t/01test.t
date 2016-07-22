@@ -19,7 +19,9 @@ is $notify.app-name, 'testtwo', 'writing app name';
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
 
 is $n.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification';
-is $notify.error.WHAT, Desktop::Notify::GError, 'reading a GError';
+is $notify.error.WHAT, Desktop::Notify::GError, "it's a GError";
+is $notify.error.domain, 0, "reading error domain";
+is $notify.error.code, 0, "reading error code";
 if AUTHOR {
   ok $notify.show-notification($n), 'showing the notification';
   # Does it show on screen? :-)

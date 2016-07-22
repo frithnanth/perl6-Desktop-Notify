@@ -38,8 +38,8 @@ sub notify_notification_set_urgency(NotifyNotification $notification, int64 $urg
                             is native(LIB) { * }
 
 has GError $.error is rw;
-submethod BUILD(:$app-name!) { notify_init($app-name) };
-submethod DESTROY { notify_uninit() };
+submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
+submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
 multi method app-name(--> Str) { notify_get_app_name }
 multi method app-name(Str $appname) { notify_set_app_name($appname) }
