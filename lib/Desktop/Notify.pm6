@@ -48,43 +48,43 @@ submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
 multi method app-name(--> Str) { notify_get_app_name }
-multi method app-name(Str $appname) { notify_set_app_name($appname) }
+multi method app-name(Str $appname!) { notify_set_app_name($appname) }
 method new-notification(Str $summary, Str $body, Str $icon --> NotifyNotification)
 {
   notify_notification_new($summary, $body, $icon);
 }
-method show(NotifyNotification $notification --> Bool)
+method show(NotifyNotification $notification!, GError $err? --> Bool)
 {
-  notify_notification_show($notification, $!error).Bool;
+  notify_notification_show($notification, $err // $!error).Bool;
 }
-method close(NotifyNotification $notification --> Bool)
+method close(NotifyNotification $notification!, GError $err? --> Bool)
 {
-  notify_notification_close($notification, $!error).Bool;
+  notify_notification_close($notification, $err // $!error).Bool;
 }
 method get-type(--> Int)
 {
   notify_notification_get_type();
 }
-method update(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
+method update(NotifyNotification $notification!, Str $summary, Str $body, Str $icon --> Bool)
 {
   notify_notification_update($notification, $summary, $body, $icon).Bool;
 }
 constant NOTIFY_EXPIRES_DEFAULT is export = -1;
 constant NOTIFY_EXPIRES_NEVER   is export =  0;
-method set-timeout(NotifyNotification $notification, Int $timeout)
+method set-timeout(NotifyNotification $notification!, Int $timeout!)
 {
   notify_notification_set_timeout($notification, $timeout);
 }
-method set-category(NotifyNotification $notification, Str $category)
+method set-category(NotifyNotification $notification!, Str $category!)
 {
   notify_notification_set_category($notification, $category);
 }
 enum NotifyUrgency <low normal critical>;
-method set-urgency(NotifyNotification $notification, NotifyUrgency $urgency)
+method set-urgency(NotifyNotification $notification!, NotifyUrgency $urgency!)
 {
   notify_notification_set_urgency($notification, $urgency);
 }
-method why-closed(NotifyNotification $notification --> Int)
+method why-closed(NotifyNotification $notification! --> Int)
 {
   notify_notification_get_closed_reason($notification);
 }

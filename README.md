@@ -48,17 +48,23 @@ Creates a new notification. It takes three **mandatory** arguments: the summary
 string, the notification string and the icon to display (See the libnotify
 documentation for the available icons).
 
-#### show(NotifyNotification $notification --> Bool)
+#### show(NotifyNotification $notification!, GError $err? --> Bool)
 
-Shows the notification on screen. It takes one argument, the NotifyNotification
-object.
+Shows the notification on screen. It takes one mandatory argument, the
+NotifyNotification object, and one optional argument, the GError object.
+(The default Desktop::Notify error handling is not thread safe. See `Threading safety`
+for more info)
 
-#### close(NotifyNotification $notification --> Bool)
+#### close(NotifyNotification $notification!, GError $err? --> Bool)
 
-Closes the notification. It takes one argument, the NotifyNotification
-object. (useful for example if the timeout was set to `NOTIFY_EXPIRES_NEVER`)
+Closes the notification. It takes one mandatory argument, the NotifyNotification
+object, and one optional argument, the GError object. (The default
+Desktop::Notify error handling is not thread safe. See `Threading safety` for
+more info)
+Note that usually there's no need to explicitly `close` a notification, since
+the default is to automatically expire after a while.
 
-#### why-closed(NotifyNotification $notification --> Int)
+#### why-closed(NotifyNotification $notification! --> Int)
 
 Returns the the closed reason code for the notification. It takes one argument,
 the NotifyNotification object. (See the libnotify documentation for the meaning of
@@ -68,22 +74,37 @@ this code)
 
 Returns the notification type.
 
-#### update(NotifyNotification $notification, Str $summary, Str $body, Str $icon --> Bool)
+#### update(NotifyNotification $notification!, Str $summary, Str $body, Str $icon --> Bool)
 
 Modifies the messages of a notification which is already on screen.
 
-#### set-timeout(NotifyNotification $notification, Int $timeout)
+#### set-timeout(NotifyNotification $notification!, Int $timeout!)
 
 Sets the notification timeout. There are two available constants:
 `NOTIFY_EXPIRES_DEFAULT` and `NOTIFY_EXPIRES_NEVER`.
 
-#### set-category(NotifyNotification $notification, Str $category)
+#### set-category(NotifyNotification $notification, Str $category!)
 
 Sets the notification category (See the libnotify documentation).
 
-#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency)
+#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
 
 Sets the notification urgency. There an available `enum NotifyUrgency <low normal critical>`.
+
+## Threading safety
+
+Desktop::Notify offers a simple interface which provides an `error` class member,
+which is automatically used by the functions which need it.
+Since `error` is a shared class member, if a program makes use of threading, its value
+might be written by another thread before it's been read.
+In this case one can declare their own GError variables:
+
+```
+my $err = Desktop::Notify::GError.new;
+```
+
+and pass it as an optional argument to the .show() and .close() methods; it will be
+used instead of the object-wide one.
 
 ## Prerequisites
 This module requires the libnotify library to be installed. Please follow the

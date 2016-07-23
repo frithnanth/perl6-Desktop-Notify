@@ -43,6 +43,15 @@ if AUTHOR {
   skip 'closing the notification', 1;
 }
 
+if AUTHOR {
+  my $err = Desktop::Notify::GError.new;
+  ok $notify.show($n, $err), 'showing a notification, using a local GError object';
+  sleep 1;
+  ok $notify.close($n, $err), 'closing the notification, using a local GError object';
+}else{
+  skip 'showing and closing a notification, using a local GError object';
+}
+
 is $notify.get-type.WHAT, Int, 'get-type method';
 
 done-testing;
