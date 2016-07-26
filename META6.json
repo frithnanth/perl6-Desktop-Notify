@@ -11,7 +11,7 @@
     "Desktop::Notify" : "lib/Desktop/Notify.pm6"
   },
   "resources" : [ ],
-  "source-url" : "",
+  "source-url" : "github.com/frithnanth/perl6-Desktop-Notify",
   "test-depends" : [ ],
   "version" : "0.1"
 }
