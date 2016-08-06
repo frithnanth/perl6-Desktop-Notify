@@ -1,26 +1,28 @@
 #!/usr/bin/env perl6
 
-use lib 'lib';
+#use lib 'lib';
 use Desktop::Notify;
 
 my $notify = Desktop::Notify.new(app-name => 'myapp');
+# what about our server?
+say 'Server capabilities:';
+$notify.server-caps».say;
+# create and display notification
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
-
 $notify.set-timeout($n, NOTIFY_EXPIRES_NEVER);
-
 $notify.show($n);
 if $notify.error.code != 0 {
   warn 'something bad happened contacting the notify server';
 }
 sleep 2;
-
+# update notification
 $notify.update($n, 'Oh well!', 'Not quite a disaster!', 'stop');
-
 $notify.show($n);
 if $notify.error.code != 0 {
   warn 'something bad happened contacting the notify server';
 }
 sleep 2;
+# force closing notification
 $notify.close($n);
 if $notify.error.code != 0 {
   warn 'something bad happened closing the notification';

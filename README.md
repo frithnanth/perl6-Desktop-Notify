@@ -33,12 +33,12 @@ but you need to click on it in order to close it.
 Constructs a new `Desktop::Notify` object. It takes one **mandatory** argument:
 `app-name`, the name of the app that will be registered with the notify dæmon.
 
-#### is-initted
+#### is-initted(--> Bool)
 
 Returns True if the object has been successfully initialized.
 
 #### app-name(--> Str)
-#### app-name(Str $appname)
+#### app-name(Str $appname --> Nil)
 
 Queries or sets the app name.
 
@@ -78,18 +78,22 @@ Returns the notification type.
 
 Modifies the messages of a notification which is already on screen.
 
-#### set-timeout(NotifyNotification $notification!, Int $timeout!)
+#### set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
 
 Sets the notification timeout. There are two available constants:
 `NOTIFY_EXPIRES_DEFAULT` and `NOTIFY_EXPIRES_NEVER`.
 
-#### set-category(NotifyNotification $notification, Str $category!)
+#### set-category(NotifyNotification $notification, Str $category! --> Nil)
 
 Sets the notification category (See the libnotify documentation).
 
-#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
+#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
 Sets the notification urgency. There an available `enum NotifyUrgency <low normal critical>`.
+
+#### server-caps(--> Seq)
+
+Reads server capabilities and returns a sequence.
 
 ## Threading safety
 
@@ -117,8 +121,8 @@ sudo apt-get install libnotify4
 ```
 
 The module looks for a library called libnotify.so.4, or whatever it finds in
-the environment variable ```PERL6_NOTIFY_LIB``` (provided that the library you
-choose uses the same API).
+the environment variable ```PERL6_NOTIFY_LIB``` (provided that the library one
+chooses uses the same API).
 
 ## Installation
 
@@ -131,7 +135,7 @@ $ panda install Desktop::Notify
 
 ## Testing
 
-To run tests:
+To run the tests:
 
 ```
 $ prove -e "perl6 -Ilib"
@@ -142,6 +146,17 @@ or
 ```
 $ prove6
 ```
+
+## TODO
+
+NotifyActionCallback
+notify_notification_set_image_from_pixbuf
+notify_notification_set_hint
+notify_notification_clear_hints
+notify_notification_add_action
+notify_notification_clear_actions
+notify_get_server_info
+notify_get_server_caps
 
 ## Author
 

@@ -54,4 +54,10 @@ if AUTHOR {
 
 is $notify.get-type.WHAT, Int, 'get-type method';
 
+if AUTHOR {
+  ok $notify.server-caps.elems > 0, 'reading server caps';
+}else{
+  skip 'reading server caps';
+}
+
 done-testing;
