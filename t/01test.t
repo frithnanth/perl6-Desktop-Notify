@@ -63,6 +63,6 @@ if AUTHOR {
 my %res = $notify.server-info;
 
 is %res<return>, True, 'server info returns True';
-ok %res<version>.split('.').elems > 0, 'server info version';
+ok %res<version>.parts.elems > 0, 'server info version';
 
 done-testing;

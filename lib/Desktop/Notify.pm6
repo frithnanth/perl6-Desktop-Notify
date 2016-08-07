@@ -115,13 +115,15 @@ method server-info(--> Hash)
   my $name = Pointer[Str].new;
   my $vendor = Pointer[Str].new;
   my $version = Pointer[Str].new;
-  my $spec_version = Pointer[Str].new;
-  my $ret = notify_get_server_info($name, $vendor, $version, $spec_version).Bool;
+  my $spec-version = Pointer[Str].new;
+  my $ret = notify_get_server_info($name, $vendor, $version, $spec-version).Bool;
+  my $ver = Version.new(nativecast(Str, $version));
+  my $spec-ver = Version.new(nativecast(Str, $spec-version));
   return { return       => $ret,
            name         => nativecast(Str, $name),
            vendor       => nativecast(Str, $vendor),
-           version      => nativecast(Str, $version),
-           spec_version => nativecast(Str, $spec_version)
+           version      => $ver,
+           spec-version => $spec-ver,
          };
 }
 
