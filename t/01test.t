@@ -60,9 +60,13 @@ if AUTHOR {
   skip 'reading server caps';
 }
 
-my %res = $notify.server-info;
-
-is %res<return>, True, 'server info returns True';
-ok %res<version>.parts.elems > 0, 'server info version';
+if AUTHOR {
+  my %res = $notify.server-info;
+  is %res<return>, True, 'server info return value';
+  ok %res<version>.parts.elems > 0, 'server info version';
+}else{
+  skip 'server info return value';
+  skip 'server info version';
+}
 
 done-testing;
