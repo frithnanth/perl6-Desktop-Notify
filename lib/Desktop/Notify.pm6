@@ -47,6 +47,11 @@ sub notify_notification_set_category(NotifyNotification $notification, Str $cate
 sub notify_notification_set_urgency(NotifyNotification $notification, int64 $urgency)
                             is native(LIB) { * }
 sub notify_get_server_caps(--> GList) is native(LIB) { * }
+sub notify_get_server_info(Pointer[Str] $name is rw,
+                           Pointer[Str] $vendor is rw,
+                           Pointer[Str] $version is rw,
+                           Pointer[Str] $spec_version is rw --> int64)
+                           is native(LIB) { * }
 
 # OO interface
 has GError $.error is rw;
@@ -105,6 +110,20 @@ method server-caps(--> Seq)
     $l = $l.next;
   }
 }
+method server-info(--> Hash)
+{
+  my $name = Pointer[Str].new;
+  my $vendor = Pointer[Str].new;
+  my $version = Pointer[Str].new;
+  my $spec_version = Pointer[Str].new;
+  my $ret = notify_get_server_info($name, $vendor, $version, $spec_version).Bool;
+  return { return       => $ret,
+           name         => nativecast(Str, $name),
+           vendor       => nativecast(Str, $vendor),
+           version      => nativecast(Str, $version),
+           spec_version => nativecast(Str, $spec_version)
+         };
+}
 
 =begin pod
 
@@ -135,8 +154,7 @@ $notify.show($n);
 =head1 DESCRIPTION
 
 B<Desktop::Notify> is a set of simple bindings to libnotify using NativeCall. Some
-function calls are not currently implemented (see the I<TODO> section), however
-these are enough to create and display notifications.
+function calls are not currently implemented (see the I<TODO> section).
 
 =head2 new(Str $appname)
 
@@ -198,11 +216,16 @@ Sets the notification category (See the libnotify documentation).
 
 =head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
-Sets the notification urgency. There an available `enum NotifyUrgency <low normal critical>`.
+Sets the notification urgency. An B<enum NotifyUrgency <low normal critical>> is available.
 
 =head2 server-caps(--> Seq)
 
 Reads server capabilities and returns a sequence.
+
+=head2 server-info(--> Hash)
+
+Reads the server info and returns an hash. The return value of the C function call is
+returned as the value of the B<return> key of the hash.
 
 =head1 Threading safety
 
@@ -259,14 +282,11 @@ $ prove6
 
 =head1 TODO
 
-NotifyActionCallback
 notify_notification_set_image_from_pixbuf
 notify_notification_set_hint
 notify_notification_clear_hints
 notify_notification_add_action
 notify_notification_clear_actions
-notify_get_server_info
-notify_get_server_caps
 
 =head1 Author
 

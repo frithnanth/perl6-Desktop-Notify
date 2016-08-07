@@ -1,8 +1,6 @@
 ## Desktop::Notify
 
-Desktop::Notify is a set of simple bindings to libnotify using NativeCall. Some
-function calls are not currently implemented, however these are enough to
-create and display notifications.
+Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
 
 ## Example
 
@@ -23,8 +21,10 @@ $notify.update($n, 'Oh well!', 'Not quite a disaster!', 'stop');
 $notify.show($n);
 ```
 
-If you're trying this code, note that the notification doesn't fade by itself,
+If you run this code, note that the notification doesn't fade by itself,
 but you need to click on it in order to close it.
+
+For more examples see the `example` directory.
 
 ## Documentation
 
@@ -89,11 +89,16 @@ Sets the notification category (See the libnotify documentation).
 
 #### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
-Sets the notification urgency. There an available `enum NotifyUrgency <low normal critical>`.
+Sets the notification urgency. An `enum NotifyUrgency <low normal critical>` is available.
 
 #### server-caps(--> Seq)
 
-Reads server capabilities and returns a sequence.
+Collects the server capabilities and returns a sequence.
+
+#### server-info(--> Hash)
+
+Reads the server info and returns an hash. The return value of the C function call is
+returned as the value of the `return` key of the hash.
 
 ## Threading safety
 
@@ -149,14 +154,11 @@ $ prove6
 
 ## TODO
 
-NotifyActionCallback
 notify_notification_set_image_from_pixbuf
 notify_notification_set_hint
 notify_notification_clear_hints
 notify_notification_add_action
 notify_notification_clear_actions
-notify_get_server_info
-notify_get_server_caps
 
 ## Author
 

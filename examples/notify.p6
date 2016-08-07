@@ -6,7 +6,9 @@ use Desktop::Notify;
 my $notify = Desktop::Notify.new(app-name => 'myapp');
 # what about our server?
 say 'Server capabilities:';
-$notify.server-caps».say;
+say $notify.server-caps.perl;
+say 'Server info:';
+say $notify.server-info.perl;
 # create and display notification
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
 $notify.set-timeout($n, NOTIFY_EXPIRES_NEVER);

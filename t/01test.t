@@ -60,4 +60,9 @@ if AUTHOR {
   skip 'reading server caps';
 }
 
+my %res = $notify.server-info;
+
+is %res<return>, True, 'server info returns True';
+ok %res<version>.split('.').elems > 0, 'server info version';
+
 done-testing;
