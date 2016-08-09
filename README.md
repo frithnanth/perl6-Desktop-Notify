@@ -42,11 +42,15 @@ Returns True if the object has been successfully initialized.
 
 Queries or sets the app name.
 
-#### new-notification(Str $summary, Str $body, Str $icon --> NotifyNotification)
+#### new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
+#### new-notification(Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?  --> NotifyNotification)
 
-Creates a new notification. It takes three **mandatory** arguments: the summary
-string, the notification string and the icon to display (See the libnotify
-documentation for the available icons).
+Creates a new notification.
+The first form takes three positional arguments: the summary string, the notification string and
+the icon to display (See the libnotify documentation for the available icons).
+The second form takes a number of named argument. `summary`, `body`, and `icon` are **mandatory**,
+the others are optional. If `timeout`, `category`, and `urgency` are defined, this method will call
+the corresponding "set" methods documented below.
 
 #### show(NotifyNotification $notification!, GError $err? --> Bool)
 

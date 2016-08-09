@@ -17,8 +17,22 @@ $notify.app-name('testtwo');
 is $notify.app-name, 'testtwo', 'writing app name';
 
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
+is $n.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification (positional arguments)';
 
-is $n.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification';
+my $n2 = $notify.new-notification(summary => 'Attention!',
+                                  body => 'What just happened?',
+                                  icon => 'stop');
+is $n2.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification (named arguments)';
+
+my $n3 = $notify.new-notification(summary => 'Attention!',
+                                  body => 'What just happened?',
+                                  icon => 'stop',
+                                  timeout => 2_000,
+                                  category => 'booboo',
+                                  urgency => Desktop::Notify::NotifyUrgency::critical,
+                                 );
+is $n3.WHAT, Desktop::Notify::NotifyNotification, 'creating a complex notification (named arguments)';
+
 is $notify.error.WHAT, Desktop::Notify::GError, "it's a GError";
 is $notify.error.domain, 0, "reading error domain";
 is $notify.error.code, 0, "reading error code";

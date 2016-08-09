@@ -56,14 +56,35 @@ sub notify_get_server_info(Pointer[Str] $name is rw,
 # OO interface
 has GError $.error is rw;
 has GList $.glist is rw;
+enum NotifyUrgency <low normal critical>;
 submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
 multi method app-name(--> Str) { notify_get_app_name }
 multi method app-name(Str $appname! --> Nil) { notify_set_app_name($appname) }
-method new-notification(Str $summary, Str $body, Str $icon --> NotifyNotification)
+multi method new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
 {
   notify_notification_new($summary, $body, $icon);
+}
+multi method new-notification(Str :$summary!,
+                              Str :$body!,
+                              Str :$icon!,
+                              Int :$timeout?,
+                              Str :$category?,
+                              NotifyUrgency :$urgency?
+                              --> NotifyNotification)
+{
+  my NotifyNotification $n = notify_notification_new($summary, $body, $icon);
+  with $timeout {
+    notify_notification_set_timeout($n, $timeout);
+  }
+  with $category {
+    notify_notification_set_category($n, $category);
+  }
+  with $urgency {
+    notify_notification_set_urgency($n, $urgency);
+  }
+  return $n;
 }
 method show(NotifyNotification $notification!, GError $err? --> Bool)
 {
@@ -91,7 +112,6 @@ method set-category(NotifyNotification $notification!, Str $category! --> Nil)
 {
   notify_notification_set_category($notification, $category);
 }
-enum NotifyUrgency <low normal critical>;
 method set-urgency(NotifyNotification $notification!, NotifyUrgency $urgency! --> Nil)
 {
   notify_notification_set_urgency($notification, $urgency);
@@ -165,15 +185,20 @@ B<app-name>, the name of the app that will be registered with the notify dæmon.
 
 Returns True if the object has been successfully initialized.
 
-=head2 app-name(--> Str) app-name(Str $appname --> Nil)
+=head2 app-name(--> Str)
+=head2 app-name(Str $appname --> Nil)
 
 Queries or sets the app name.
 
-=head2 new-notification(Str $summary, Str $body, Str $icon --> NotifyNotification)
+=head2 new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
+=head2 new-notification(Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?  --> NotifyNotification)
 
-Creates a new notification. It takes three I<mandatory> arguments: the summary
-string, the notification string and the icon to display (See the libnotify
-documentation for the available icons).
+Creates a new notification.
+The first form takes three positional arguments: the summary string, the notification string and
+the icon to display (See the libnotify documentation for the available icons).
+The second form takes a number of named argument. B<summary>, B<body>, and B<icon> are I<mandatory>,
+the others are optional. If B<timeout>, B<category>, and B<urgency> are defined, this method will call
+the corresponding "set" methods documented below.
 
 =head2 show(NotifyNotification $notification!, GError $err? --> Bool)
 
@@ -279,14 +304,6 @@ or
 =begin code
 $ prove6
 =end code
-
-=head1 TODO
-
-notify_notification_set_image_from_pixbuf
-notify_notification_set_hint
-notify_notification_clear_hints
-notify_notification_add_action
-notify_notification_clear_actions
 
 =head1 Author
 
