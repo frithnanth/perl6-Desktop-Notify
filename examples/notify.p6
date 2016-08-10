@@ -10,10 +10,10 @@ say $notify.server-caps.perl;
 say 'Server info:';
 say $notify.server-info.perl;
 # create and display notification
-my $n = $notify.new-notification(summary => 'Attention!',
-                                 body => 'What just happened?',
-                                 icon => 'stop',
-                                 timeout => NOTIFY_EXPIRES_NEVER,
+my $n = $notify.new-notification(:summary('Attention!'),
+                                 :body('What just happened?'),
+                                 :icon('stop'),
+                                 :timeout(NOTIFY_EXPIRES_NEVER),
                                 );
 $notify.show($n);
 if $notify.error.code != 0 {

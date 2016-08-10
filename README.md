@@ -93,7 +93,8 @@ Sets the notification category (See the libnotify documentation).
 
 #### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
-Sets the notification urgency. An `enum NotifyUrgency <low normal critical>` is available.
+Sets the notification urgency. An `enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>`
+is available.
 
 #### server-caps(--> Seq)
 
@@ -130,7 +131,7 @@ sudo apt-get install libnotify4
 ```
 
 The module looks for a library called libnotify.so.4, or whatever it finds in
-the environment variable ```PERL6_NOTIFY_LIB``` (provided that the library one
+the environment variable `PERL6_NOTIFY_LIB` (provided that the library one
 chooses uses the same API).
 
 ## Installation
@@ -156,13 +157,10 @@ or
 $ prove6
 ```
 
-## TODO
+## Note
 
-notify_notification_set_image_from_pixbuf
-notify_notification_set_hint
-notify_notification_clear_hints
-notify_notification_add_action
-notify_notification_clear_actions
+With version 0.2.0 I modified the `enum NotifyUrgency` to avoid polluting (too much) the namespace.
+Now instead of e.g. `low`, one has to use `NotifyUrgencyLow`.
 
 ## Author
 

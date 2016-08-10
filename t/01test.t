@@ -6,8 +6,9 @@ use Desktop::Notify;
 
 constant AUTHOR = ?%*ENV<TEST_AUTHOR>;
 
-my $notify = Desktop::Notify.new(app-name => 'testone');
+is NotifyUrgencyLow.value, 0, "enum NotifyUrgency imported";
 
+my $notify = Desktop::Notify.new(app-name => 'testone');
 ok { defined $notify }, 'initialization';
 ok $notify.is-initted, "is-initted method";
 is $notify.app-name, 'testone', 'reading app name';
@@ -19,17 +20,17 @@ is $notify.app-name, 'testtwo', 'writing app name';
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
 is $n.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification (positional arguments)';
 
-my $n2 = $notify.new-notification(summary => 'Attention!',
-                                  body => 'What just happened?',
-                                  icon => 'stop');
+my $n2 = $notify.new-notification(:summary('Attention!'),
+                                  :body('What just happened?'),
+                                  :icon('stop'));
 is $n2.WHAT, Desktop::Notify::NotifyNotification, 'creating a notification (named arguments)';
 
-my $n3 = $notify.new-notification(summary => 'Attention!',
-                                  body => 'What just happened?',
-                                  icon => 'stop',
-                                  timeout => 2_000,
-                                  category => 'booboo',
-                                  urgency => Desktop::Notify::NotifyUrgency::critical,
+my $n3 = $notify.new-notification(:summary('Attention!'),
+                                  :body('What just happened?'),
+                                  :icon('stop'),
+                                  :timeout(2_000),
+                                  :category('booboo'),
+                                  :urgency(NotifyUrgencyCritical),
                                  );
 is $n3.WHAT, Desktop::Notify::NotifyNotification, 'creating a complex notification (named arguments)';
 

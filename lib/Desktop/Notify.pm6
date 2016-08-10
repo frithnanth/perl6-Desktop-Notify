@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify;
+unit class Desktop::Notify:ver<0.2.0>;
 
 use NativeCall;
 
@@ -56,7 +56,7 @@ sub notify_get_server_info(Pointer[Str] $name is rw,
 # OO interface
 has GError $.error is rw;
 has GList $.glist is rw;
-enum NotifyUrgency <low normal critical>;
+enum NotifyUrgency is export <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>;
 submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
@@ -75,15 +75,9 @@ multi method new-notification(Str :$summary!,
                               --> NotifyNotification)
 {
   my NotifyNotification $n = notify_notification_new($summary, $body, $icon);
-  with $timeout {
-    notify_notification_set_timeout($n, $timeout);
-  }
-  with $category {
-    notify_notification_set_category($n, $category);
-  }
-  with $urgency {
-    notify_notification_set_urgency($n, $urgency);
-  }
+  notify_notification_set_timeout($n, $timeout)   with $timeout ;
+  notify_notification_set_category($n, $category) with $category ;
+  notify_notification_set_urgency($n, $urgency)   with $urgency ;
   return $n;
 }
 method show(NotifyNotification $notification!, GError $err? --> Bool)
@@ -241,7 +235,8 @@ Sets the notification category (See the libnotify documentation).
 
 =head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
-Sets the notification urgency. An B<enum NotifyUrgency <low normal critical>> is available.
+Sets the notification urgency. An B<enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>>
+is available.
 
 =head2 server-caps(--> Seq)
 
@@ -304,6 +299,11 @@ or
 =begin code
 $ prove6
 =end code
+
+=head1 Note
+
+With version 0.2.0 I modified the B<enum NotifyUrgency> to avoid polluting (too much) the namespace.
+Now instead of e.g. B<low>, one has to use B<NotifyUrgencyLow>.
 
 =head1 Author
 
