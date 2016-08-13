@@ -56,7 +56,7 @@ sub notify_get_server_info(Pointer[Str] $name is rw,
 # OO interface
 has GError $.error is rw;
 has GList $.glist is rw;
-enum NotifyUrgency is export <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>;
+enum NotifyUrgency is export(:constants) <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>;
 submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
@@ -96,8 +96,8 @@ method update(NotifyNotification $notification!, Str $summary, Str $body, Str $i
 {
   notify_notification_update($notification, $summary, $body, $icon).Bool;
 }
-constant NOTIFY_EXPIRES_DEFAULT is export = -1;
-constant NOTIFY_EXPIRES_NEVER   is export =  0;
+constant NOTIFY_EXPIRES_DEFAULT is export(:constants) = -1;
+constant NOTIFY_EXPIRES_NEVER   is export(:constants) =  0;
 method set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
 {
   notify_notification_set_timeout($notification, $timeout);
@@ -149,7 +149,7 @@ Desktop::Notify - A simple interface to libnotify
 =begin code
 
 use v6;
-use Desktop::Notify;
+use Desktop::Notify :constants;
 
 my $notify = Desktop::Notify.new(app-name => 'myapp');
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
@@ -226,8 +226,10 @@ Modifies the messages of a notification which is already on screen.
 
 =head2 set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
 
-Sets the notification timeout. There are two available constants:
-B<NOTIFY_EXPIRES_DEFAULT> and B<NOTIFY_EXPIRES_NEVER>.
+Sets the notification timeout. There are two available constants,
+B<NOTIFY_EXPIRES_DEFAULT> and B<NOTIFY_EXPIRES_NEVER>, when explicitly imported
+with B<use Desktop::Notify :constants;>.
+
 
 =head2 set-category(NotifyNotification $notification, Str $category! --> Nil)
 
@@ -236,7 +238,7 @@ Sets the notification category (See the libnotify documentation).
 =head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
 Sets the notification urgency. An B<enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>>
-is available.
+is available when explicitly imported with B<use Desktop::Notify :constants;>.
 
 =head2 server-caps(--> Seq)
 

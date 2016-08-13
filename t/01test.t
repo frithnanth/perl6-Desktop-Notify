@@ -2,7 +2,7 @@
 
 use Test;
 use lib 'lib';
-use Desktop::Notify;
+use Desktop::Notify :constants;
 
 constant AUTHOR = ?%*ENV<TEST_AUTHOR>;
 

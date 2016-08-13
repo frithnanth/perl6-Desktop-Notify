@@ -84,8 +84,9 @@ Modifies the messages of a notification which is already on screen.
 
 #### set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
 
-Sets the notification timeout. There are two available constants:
-`NOTIFY_EXPIRES_DEFAULT` and `NOTIFY_EXPIRES_NEVER`.
+Sets the notification timeout. There are two available constants,
+`NOTIFY_EXPIRES_DEFAULT` and `NOTIFY_EXPIRES_NEVER`, when explicitly imported
+with `use Desktop::Notify :constants;`.
 
 #### set-category(NotifyNotification $notification, Str $category! --> Nil)
 
@@ -94,7 +95,7 @@ Sets the notification category (See the libnotify documentation).
 #### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
 
 Sets the notification urgency. An `enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>`
-is available.
+is available when explicitly imported with `use Desktop::Notify :constants;`.
 
 #### server-caps(--> Seq)
 
