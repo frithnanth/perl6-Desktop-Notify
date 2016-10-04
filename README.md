@@ -6,7 +6,7 @@ Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
 
 | Operating System  |   Build Status  | CI Provider |
 | ----------------- | --------------- | ----------- |
-| Linux             | [![Build Status](https://travis-ci.org/frithnanth/perl6-Desktop-Notify?branch=master)](https://travis-ci.org/frithnanth/perl6-Desktop-Notify)  | Travis CI |
+| Linux             | [![Build Status](https://travis-ci.org/frithnanth/perl6-Desktop-Notify.svg?branch=master)](https://travis-ci.org/frithnanth/perl6-Desktop-Notify)  | Travis CI |
 
 ## Example
 
