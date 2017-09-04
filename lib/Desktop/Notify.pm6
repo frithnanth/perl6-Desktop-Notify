@@ -4,7 +4,7 @@ unit class Desktop::Notify:ver<0.2.1>;
 
 use NativeCall;
 
-constant LIB = 'notify';
+constant LIB = ('notify', v4);
 
 class NotifyNotification is repr('CPointer') { * } # libnotify private struct
 class GError is repr('CStruct') {
