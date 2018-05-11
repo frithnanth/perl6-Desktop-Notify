@@ -12,7 +12,7 @@ Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
 
 ```Perl6
 use v6;
-use Desktop::Notify;
+use Desktop::Notify :constants;
 
 my $notify = Desktop::Notify.new(app-name => 'myapp');
 my $n = $notify.new-notification('Attention!', 'What just happened?', 'stop');
