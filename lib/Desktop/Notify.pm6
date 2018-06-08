@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify:ver<0.3.0>;
+unit class Desktop::Notify:ver<0.3.1>;
 
 use NativeCall;
 
@@ -52,14 +52,13 @@ sub notify_get_server_info(Pointer[Str] $name is rw,
                            Pointer[Str] $version is rw,
                            Pointer[Str] $spec_version is rw --> int32)
                            is native(LIB) is export { * }
-# NOTE This needs a working Gtk module (GTK::Simple is not installing at the moment)
-#sub notify_notification_add_action(NotifyNotification $notification2,
-#                                   Str $action2,
-#                                   Str $label,
-#                                   &callback (NotifyNotification $notification1, Str $action1, Pointer[void] $dummy1?),
-#                                   Pointer[void] $dummy2?,
-#                                   &free? (Pointer[void] $mem))
-#                                   is native(LIB) is export { * }
+sub notify_notification_add_action(NotifyNotification $notification2,
+                                   Str $action2,
+                                   Str $label,
+                                   &callback (NotifyNotification $notification1, Str $action1, Pointer[void] $dummy1?),
+                                   Pointer[void] $dummy2?,
+                                   &free? (Pointer[void] $mem))
+                                   is native(LIB) is export { * }
 sub notify_notification_clear_actions(NotifyNotification $notification) is native(LIB) is export { * }
 
 # OO interface
@@ -97,11 +96,10 @@ method close(NotifyNotification $notification!, GError $err? --> Bool)
 {
   notify_notification_close($notification, $err // $!error).Bool;
 }
-# NOTE This needs a working Gtk module (GTK::Simple is not installing at the moment)
-#method add-action(NotifyNotification $notification!, Str $action, Str $label, &callback (NotifyNotification $notification1, Str $action1))
-# {
-#   notify_notification_add_action($notification, $action, $label, callback);
-# }
+method add-action(NotifyNotification $notification!, Str $action, Str $label, &callback (NotifyNotification $notification1, Str $action1))
+{
+  notify_notification_add_action($notification, $action, $label, callback);
+}
 method get-type(--> Int)
 {
   notify_notification_get_type();
