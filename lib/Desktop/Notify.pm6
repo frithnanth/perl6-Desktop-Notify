@@ -83,9 +83,9 @@ multi method new-notification(Str :$summary!,
                               --> NotifyNotification)
 {
   my NotifyNotification $n = notify_notification_new($summary, $body, $icon);
-  notify_notification_set_timeout($n, $timeout)   with $timeout ;
-  notify_notification_set_category($n, $category) with $category ;
-  notify_notification_set_urgency($n, $urgency)   with $urgency ;
+  notify_notification_set_timeout($n, $timeout)   with $timeout;
+  notify_notification_set_category($n, $category) with $category;
+  notify_notification_set_urgency($n, $urgency)   with $urgency;
   return $n;
 }
 method show(NotifyNotification $notification!, GError $err? --> Bool)
