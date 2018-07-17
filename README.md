@@ -44,7 +44,7 @@ Constructs a new `Desktop::Notify` object. It takes one **mandatory** argument:
 Returns True if the object has been successfully initialized.
 
 #### app-name(--> Str)
-#### app-name(Str $appname --> Nil)
+#### app-name(Str $appname)
 
 Queries or sets the app name.
 
@@ -88,17 +88,17 @@ Returns the notification type.
 
 Modifies the messages of a notification which is already on screen.
 
-#### set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
+#### set-timeout(NotifyNotification $notification!, Int $timeout!)
 
 Sets the notification timeout. There are two available constants,
 `NOTIFY_EXPIRES_DEFAULT` and `NOTIFY_EXPIRES_NEVER`, when explicitly imported
 with `use Desktop::Notify :constants;`.
 
-#### set-category(NotifyNotification $notification, Str $category! --> Nil)
+#### set-category(NotifyNotification $notification, Str $category!)
 
 Sets the notification category (See the libnotify documentation).
 
-#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
+#### set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
 
 Sets the notification urgency. An `enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>`
 is available when explicitly imported with `use Desktop::Notify :constants;`.
