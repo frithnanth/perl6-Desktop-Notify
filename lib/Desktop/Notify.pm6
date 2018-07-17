@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify:ver<0.3.1>;
+unit class Desktop::Notify:ver<0.3.2>;
 
 use NativeCall;
 
@@ -69,7 +69,11 @@ submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
 submethod DESTROY { notify_uninit(); $!error.free };
 method is-initted(--> Bool) { notify_is_initted.Bool }
 multi method app-name(--> Str) { notify_get_app_name }
-multi method app-name(Str $appname! --> Nil) { notify_set_app_name($appname) }
+multi method app-name(Str $appname!)
+{
+  notify_set_app_name($appname);
+  self;
+}
 multi method new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
 {
   notify_notification_new($summary, $body, $icon);
@@ -99,6 +103,7 @@ method close(NotifyNotification $notification!, GError $err? --> Bool)
 method add-action(NotifyNotification $notification!, Str $action, Str $label, &callback (NotifyNotification $notification1, Str $action1))
 {
   notify_notification_add_action($notification, $action, $label, callback);
+  self;
 }
 method get-type(--> Int)
 {
@@ -110,17 +115,20 @@ method update(NotifyNotification $notification!, Str $summary, Str $body, Str $i
 }
 constant NOTIFY_EXPIRES_DEFAULT is export(:constants) = -1;
 constant NOTIFY_EXPIRES_NEVER   is export(:constants) =  0;
-method set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
+method set-timeout(NotifyNotification $notification!, Int $timeout!)
 {
   notify_notification_set_timeout($notification, $timeout);
+  self;
 }
-method set-category(NotifyNotification $notification!, Str $category! --> Nil)
+method set-category(NotifyNotification $notification!, Str $category!)
 {
   notify_notification_set_category($notification, $category);
+  self;
 }
-method set-urgency(NotifyNotification $notification!, NotifyUrgency $urgency! --> Nil)
+method set-urgency(NotifyNotification $notification!, NotifyUrgency $urgency!)
 {
   notify_notification_set_urgency($notification, $urgency);
+  self;
 }
 method why-closed(NotifyNotification $notification! --> Int)
 {
@@ -192,7 +200,7 @@ B<app-name>, the name of the app that will be registered with the notify dæmon.
 Returns True if the object has been successfully initialized.
 
 =head2 app-name(--> Str)
-=head2 app-name(Str $appname --> Nil)
+=head2 app-name(Str $appname)
 
 Queries or sets the app name.
 
@@ -236,18 +244,18 @@ Returns the notification type.
 
 Modifies the messages of a notification which is already on screen.
 
-=head2 set-timeout(NotifyNotification $notification!, Int $timeout! --> Nil)
+=head2 set-timeout(NotifyNotification $notification!, Int $timeout!)
 
 Sets the notification timeout. There are two available constants,
 B<NOTIFY_EXPIRES_DEFAULT> and B<NOTIFY_EXPIRES_NEVER>, when explicitly imported
 with B<use Desktop::Notify :constants;>.
 
 
-=head2 set-category(NotifyNotification $notification, Str $category! --> Nil)
+=head2 set-category(NotifyNotification $notification, Str $category!)
 
 Sets the notification category (See the libnotify documentation).
 
-=head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency! --> Nil)
+=head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
 
 Sets the notification urgency. An B<enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>>
 is available when explicitly imported with B<use Desktop::Notify :constants;>.
