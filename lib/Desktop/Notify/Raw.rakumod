@@ -1,6 +1,6 @@
 use v6;
 
-unit class Desktop::Notify::Raw:ver<1.0.0>;
+unit class Desktop::Notify::Raw:ver<1.0.0>:auth<cpan:FRITH>;
 
 use NativeCall;
 
