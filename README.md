@@ -1,6 +1,6 @@
 ## Desktop::Notify
 
-Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
+Desktop::Notify A simple interface to libnotify
 
 ## Build Status
 
@@ -9,6 +9,21 @@ Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
 | Linux             | [![Build Status](https://travis-ci.org/frithnanth/perl6-Desktop-Notify.svg?branch=master)](https://travis-ci.org/frithnanth/perl6-Desktop-Notify)  | Travis CI |
 
 ## Example
+
+```Perl6
+use Desktop::Notify::Simple;
+
+my $n = Desktop::Notify::Simple.new(
+  :app-name('testone'),
+  :summary('Attention!'),
+  :body('What just happened?'),
+  :icon('stop')
+).show;
+
+sleep 2;
+
+$n.update(:summary('Oh well!'), :body('Not quite a disaster!'), :icon('stop')).show;
+```
 
 ```Perl6
 use v6;
@@ -27,12 +42,38 @@ $notify.update($n, 'Oh well!', 'Not quite a disaster!', 'stop');
 $notify.show($n);
 ```
 
-If you run this code, note that the notification doesn't fade by itself,
-but you need to click on it in order to close it.
+If you run the second program, note that the notification doesn't fade by itself, but you need to click on it
+in order to close it.
 
 For more examples see the `example` directory.
 
 ## Documentation
+
+There are three interfaces available: the `Raw` interface which maps the library's C functions, an OO interface
+which exposes most of the low level functionality, and a `Simple` interface.
+To use the low-level interface:
+
+```perl6
+use Desktop::Notify::Raw;
+```
+
+to use the intermediate-level interface:
+
+```perl6
+use Desktop::Notify;
+```
+
+to use the simple interface:
+
+```perl6
+use Desktop::Notify::Simple;
+```
+
+### The Raw interface
+
+Please refer to the original C library documentation [here](https://developer.gnome.org/libnotify/0.7/).
+
+### The intermediate-level interface
 
 #### new(Str $appname)
 
@@ -112,6 +153,41 @@ Collects the server capabilities and returns a sequence.
 Reads the server info and returns an hash. The return value of the C function call is
 returned as the value of the `return` key of the hash.
 
+### The simple interface
+
+#### new(Str :$app-name!, Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?)
+
+Constructs a new `Desktop::Notify::Simple` object. It takes four mandatory arguments:
+
+* $app-name the name of the app that will be registered with the notify dæmon.
+* $summary  appears in bold on the top side of the notification
+* $body     notification body
+* $icon     icon name
+
+and three optional arguments:
+
+* $timeout   expressed in seconds (while Desktop::Notify uses milliseconds)
+* $category  can be used by the notification server to filter or display the data in a certain way
+* $urgency   urgency level of this notification
+
+An `enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>` is available.
+
+#### show(GError $err?)
+
+Shows the notification on screen. It takes one optional argument, the GError object.
+(The default Desktop::Notify error handling is not thread safe. See `Threading safety` for more info)
+
+#### update(Str :$summary, Str :$body, Str :$icon)
+
+Modifies the messages of a notification which is already on screen.
+
+#### close(GError $err?)
+
+Closes the notification. It takes one optional argument, the GError object. (The default Desktop::Notify error
+handling is not thread safe. See `Threading safety` for more info)
+Note that usually there's no need to explicitly 'close' a notification, since the default is to automatically
+expire after a while.
+
 ## Threading safety
 
 Desktop::Notify offers a simple interface which provides an `error` class member,
@@ -120,7 +196,7 @@ Since `error` is a shared class member, if a program makes use of threading, its
 might be written by another thread before it's been read.
 In this case one can declare their own GError variables:
 
-```
+```perl6
 my $err = Desktop::Notify::GError.new;
 ```
 
@@ -133,13 +209,13 @@ instructions below based on your platform:
 
 ### Debian Linux
 
-```
+```console
 sudo apt-get install libnotify4
 ```
 
 ## Installation
 
-```
+```console
 $ zef install Desktop::Notify
 ```
 
@@ -147,14 +223,9 @@ $ zef install Desktop::Notify
 
 To run the tests:
 
-```
+```console
 $ prove -e "perl6 -Ilib"
 ```
-
-## Note
-
-With version 0.2.0 I modified the `enum NotifyUrgency` to avoid polluting (too much) the namespace.
-Now instead of e.g. `low`, one has to use `NotifyUrgencyLow`.
 
 ## Author
 

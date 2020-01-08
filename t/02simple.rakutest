@@ -1,0 +1,53 @@
+#!/usr/bin/env perl6
+
+use Test;
+use lib 'lib';
+use Desktop::Notify::Simple;
+
+constant AUTHOR = ?%*ENV<TEST_AUTHOR>;
+
+my $n = Desktop::Notify::Simple.new(
+  :app-name('testone'),
+  :summary('Attention!'),
+  :body('What just happened?'),
+  :icon('stop')
+);
+ok { defined $n }, 'initialization';
+
+if AUTHOR {
+  ok Desktop::Notify::Simple.new(
+      :app-name('testone'),
+      :summary('Attention!'),
+      :body('What just happened?'),
+      :icon('stop'),
+      :timeout(2))
+    .show.close, 'show the notification';
+  # Does it show on screen? :-)
+  sleep 1;
+}else{
+  skip 'show the notification', 1;
+}
+
+ok $n.update(:summary('Oh well!'), :body('Not quite a disaster!'), :icon('stop')), 'change the message';
+if AUTHOR {
+  ok $n.show, 'show updated notification';
+  sleep 1;
+}else{
+  skip 'show updated notification', 1;
+}
+if AUTHOR {
+  ok $n.close, 'close the notification';
+}else{
+  skip 'close the notification', 1;
+}
+
+if AUTHOR {
+  my $err = Desktop::Notify::Raw::GError.new;
+  ok $n.show($err), 'show a notification, using a local GError object';
+  sleep 1;
+  ok $n.close($err), 'close the notification, using a local GError object';
+}else{
+  skip 'show and close a notification, using a local GError object';
+}
+
+done-testing;

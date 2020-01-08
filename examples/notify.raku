@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-#use lib 'lib';
+use lib 'lib';
 use Desktop::Notify :constants;
 
 my $notify = Desktop::Notify.new(app-name => 'myapp');

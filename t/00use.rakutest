@@ -3,6 +3,8 @@
 use Test;
 use lib 'lib';
 
-plan 1;
+plan 3;
 
+use-ok 'Desktop::Notify::Raw';
 use-ok 'Desktop::Notify';
+use-ok 'Desktop::Notify::Simple';

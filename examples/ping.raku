@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 
+use lib 'lib';
 use Desktop::Notify :constants;
 
 sub MAIN($server, :$freq = 10, :$timeout = NOTIFY_EXPIRES_DEFAULT)

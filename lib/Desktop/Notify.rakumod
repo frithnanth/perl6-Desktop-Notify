@@ -1,72 +1,21 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify:ver<0.3.2>;
+unit class Desktop::Notify:ver<1.0.0>;
 
+use Desktop::Notify::Raw;
 use NativeCall;
 
-constant LIB = ('notify', v4);
-
-class NotifyNotification is repr('CPointer') is export { * } # libnotify private struct
-class GError is repr('CStruct') is export {
-  has int32 $.domain;
-  has int32 $.code;
-  has Str   $.message;
-}
-class GList is repr('CStruct') is export {
-  has Pointer[void] $.data;
-  has GList $.next;
-  has GList $.prev;
-}
-
-# Raw interface to libnotify
-sub notify_init(Str $appname --> int32) is native(LIB) is export { * }
-sub notify_uninit() is native(LIB) is export { * }
-sub notify_is_initted(--> int32) is native(LIB) is export { * }
-sub notify_get_app_name(--> Str) is native(LIB) is export { * }
-sub notify_set_app_name(Str $appname) is native(LIB) is export { * }
-sub notify_notification_new(Str $summary,
-                            Str $body,
-                            Str $icon --> NotifyNotification)
-                            is native(LIB) is export { * }
-sub notify_notification_show(NotifyNotification $notification, GError $error is rw --> int32)
-                            is native(LIB) is export { * }
-sub notify_notification_close(NotifyNotification $notification, GError $error is rw --> int32)
-                            is native(LIB) is export { * }
-sub notify_notification_get_closed_reason(NotifyNotification $notification --> int32)
-                            is native(LIB) is export { * }
-sub notify_notification_get_type(--> uint64) is native(LIB) { * }
-sub notify_notification_update(NotifyNotification $notification,
-                            Str $summary,
-                            Str $body,
-                            Str $icon --> int32)
-                            is native(LIB) is export { * }
-sub notify_notification_set_timeout(NotifyNotification $notification, int32 $timeout)
-                            is native(LIB) is export { * }
-sub notify_notification_set_category(NotifyNotification $notification, Str $category)
-                            is native(LIB) is export { * }
-sub notify_notification_set_urgency(NotifyNotification $notification, int32 $urgency)
-                            is native(LIB) is export { * }
-sub notify_get_server_caps(--> GList) is native(LIB) is export { * }
-sub notify_get_server_info(Pointer[Str] $name is rw,
-                           Pointer[Str] $vendor is rw,
-                           Pointer[Str] $version is rw,
-                           Pointer[Str] $spec_version is rw --> int32)
-                           is native(LIB) is export { * }
-sub notify_notification_add_action(NotifyNotification $notification2,
-                                   Str $action2,
-                                   Str $label,
-                                   &callback (NotifyNotification $notification1, Str $action1, Pointer[void] $dummy1?),
-                                   Pointer[void] $dummy2?,
-                                   &free? (Pointer[void] $mem))
-                                   is native(LIB) is export { * }
-sub notify_notification_clear_actions(NotifyNotification $notification) is native(LIB) is export { * }
-
-# OO interface
 has GError $.error is rw;
 has GList $.glist is rw;
+
 enum NotifyUrgency is export(:constants) <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>;
-submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new };
+
+constant NOTIFY_EXPIRES_DEFAULT is export(:constants) = -1;
+constant NOTIFY_EXPIRES_NEVER   is export(:constants) =  0;
+
+submethod BUILD(:$app-name!) { notify_init($app-name); $!error = GError.new }
 submethod DESTROY { notify_uninit(); $!error.free };
+
 method is-initted(--> Bool) { notify_is_initted.Bool }
 multi method app-name(--> Str) { notify_get_app_name }
 multi method app-name(Str $appname!)
@@ -92,6 +41,7 @@ multi method new-notification(Str :$summary!,
   notify_notification_set_urgency($n, $urgency)   with $urgency;
   return $n;
 }
+
 method show(NotifyNotification $notification!, GError $err? --> Bool)
 {
   notify_notification_show($notification, $err // $!error).Bool;
@@ -113,8 +63,6 @@ method update(NotifyNotification $notification!, Str $summary, Str $body, Str $i
 {
   notify_notification_update($notification, $summary, $body, $icon).Bool;
 }
-constant NOTIFY_EXPIRES_DEFAULT is export(:constants) = -1;
-constant NOTIFY_EXPIRES_NEVER   is export(:constants) =  0;
 method set-timeout(NotifyNotification $notification!, Int $timeout!)
 {
   notify_notification_set_timeout($notification, $timeout);
@@ -168,7 +116,6 @@ Desktop::Notify - A simple interface to libnotify
 =head1 SYNOPSIS
 =begin code
 
-use v6;
 use Desktop::Notify :constants;
 
 my $notify = Desktop::Notify.new(app-name => 'myapp');
@@ -192,7 +139,7 @@ function calls are not currently implemented (see the I<TODO> section).
 
 =head2 new(Str $appname)
 
-Constructs a new B<Desktop::Notify> object. It takes one I<mandatory> argument:
+Constructs a new B<Desktop::Notify> object. It takes one mandatory argument:
 B<app-name>, the name of the app that will be registered with the notify dæmon.
 
 =head2 is-initted(--> Bool)
@@ -211,8 +158,8 @@ Creates a new notification.
 The first form takes three positional arguments: the summary string, the notification string and
 the icon to display (See the libnotify documentation for the available icons).
 The second form takes a number of named argument. B<summary>, B<body>, and B<icon> are I<mandatory>,
-the others are optional. If B<timeout>, B<category>, and B<urgency> are defined, this method will call
-the corresponding "set" methods documented below.
+the others are optional. If B<timeout> (expressed in milliseconds), B<category>, and B<urgency> are defined,
+this method will call the corresponding "set" methods documented below.
 
 =head2 show(NotifyNotification $notification!, GError $err? --> Bool)
 

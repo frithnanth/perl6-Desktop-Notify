@@ -1,8 +1,7 @@
 #!/usr/bin/env perl6
 
 use lib 'lib';
-use Desktop::Notify;
-use Desktop::Notify :constants;
+use Desktop::Notify::Raw;
 
 sub callme($n, $action)
 {
