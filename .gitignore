@@ -5,7 +5,7 @@
 /resources/*.dylib
 .precomp/
 *.swp
-Session.vim
+*.vim
 !t
 TODO
 docs/
