@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify:ver<1.0.0>:auth<cpan:FRITH>;
+unit class Desktop::Notify:ver<1.0.0>:auth<zef:FRITH>;
 
 use Desktop::Notify::Raw;
 use NativeCall;

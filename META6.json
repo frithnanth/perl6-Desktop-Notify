@@ -1,5 +1,5 @@
 {
-  "auth" : "cpan:FRITH",
+  "auth" : "zef:FRITH",
   "authors" : [ "Fernando Santagata" ],
   "license": "Artistic-2.0",
   "build-depends" : [ ],
