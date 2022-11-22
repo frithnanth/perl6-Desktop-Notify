@@ -114,7 +114,25 @@ method server-info(--> Hash)
 Desktop::Notify - A simple interface to libnotify
 
 =head1 SYNOPSIS
-=begin code
+
+=begin code :lang<raku>
+
+use Desktop::Notify::Simple;
+
+my $n = Desktop::Notify::Simple.new(
+  :app-name('test'),
+  :summary('Attention!'),
+  :body('What just happened?'),
+  :icon('stop')
+).show;
+
+sleep 2;
+
+$n.update(:summary('Oh well!'), :body('Not quite a disaster!'), :icon('stop')).show;
+
+=end code
+
+=begin code :lang<raku>
 
 use Desktop::Notify :constants;
 
@@ -134,25 +152,60 @@ $notify.show($n);
 
 =head1 DESCRIPTION
 
-B<Desktop::Notify> is a set of simple bindings to libnotify using NativeCall. Some
+=head2 B<Desktop::Notify::Simple> is a set of very simple bindings to libnotify using NativeCall.
+
+=head3 new(Str :$app-name!, Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?)
+
+Constructs a new B<Desktop::Notify::Simple> object. It takes four mandatory arguments:
+
+=item $app-name the name of the app that will be registered with the notify dæmon.
+=item $summary  appears in bold on the top side of the notification
+=item $body     notification body
+=item $icon     icon name
+
+and three optional arguments:
+
+=item $timeout   expressed in seconds (while Desktop::Notify uses milliseconds)
+=item $category  can be used by the notification server to filter or display the data in a certain way
+=item $urgency   urgency level of this notification
+
+An B<enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>> is available.
+
+=head3 show(GError $err?)
+
+Shows the notification on screen. It takes one optional argument, the GError object.
+(The default Desktop::Notify error handling is not thread safe. See I<Threading safety> for more info)
+
+=head3 update(Str :$summary, Str :$body, Str :$icon)
+
+Modifies the messages of a notification which is already on screen.
+
+=head3 close(GError $err?)
+
+Closes the notification. It takes one optional argument, the GError object. (The default Desktop::Notify error
+handling is not thread safe. See I<Threading safety> for more info)
+Note that usually there's no need to explicitly 'close' a notification, since the default is to automatically
+expire after a while.
+
+=head2 B<Desktop::Notify> is a set of simple bindings to libnotify using NativeCall. Some
 function calls are not currently implemented (see the I<TODO> section).
 
-=head2 new(Str $appname)
+=head3 new(Str $appname)
 
 Constructs a new B<Desktop::Notify> object. It takes one mandatory argument:
 B<app-name>, the name of the app that will be registered with the notify dæmon.
 
-=head2 is-initted(--> Bool)
+=head3 is-initted(--> Bool)
 
 Returns True if the object has been successfully initialized.
 
-=head2 app-name(--> Str)
-=head2 app-name(Str $appname)
+=head3 app-name(--> Str)
+=head3 app-name(Str $appname)
 
 Queries or sets the app name.
 
-=head2 new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
-=head2 new-notification(Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?  --> NotifyNotification)
+=head3 new-notification(Str $summary!, Str $body!, Str $icon! --> NotifyNotification)
+=head3 new-notification(Str :$summary!, Str :$body!, Str :$icon!, Int :$timeout?, Str :$category?, NotifyUrgency :$urgency?  --> NotifyNotification)
 
 Creates a new notification.
 The first form takes three positional arguments: the summary string, the notification string and
@@ -161,14 +214,14 @@ The second form takes a number of named argument. B<summary>, B<body>, and B<ico
 the others are optional. If B<timeout> (expressed in milliseconds), B<category>, and B<urgency> are defined,
 this method will call the corresponding "set" methods documented below.
 
-=head2 show(NotifyNotification $notification!, GError $err? --> Bool)
+=head3 show(NotifyNotification $notification!, GError $err? --> Bool)
 
 Shows the notification on screen. It takes one mandatory argument, the
 NotifyNotification object, and one optional argument, the GError object.
 (The default Desktop::Notify error handling is not thread safe. See
 I<Threading safety> for more info)
 
-=head2 close(NotifyNotification $notification!, GError $err? --> Bool)
+=head3 close(NotifyNotification $notification!, GError $err? --> Bool)
 
 Closes the notification. It takes one mandatory argument, the NotifyNotification
 object, and one optional argument, the GError object. (The default
@@ -177,41 +230,41 @@ more info)
 Note that usually there's no need to explicitly 'close' a notification, since
 the default is to automatically expire after a while.
 
-=head2 why-closed(NotifyNotification $notification! --> Int)
+=head3 why-closed(NotifyNotification $notification! --> Int)
 
 Returns the the closed reason code for the notification. It takes one argument,
 the NotifyNotification object. (See the libnotify documentation for the meaning of
 this code)
 
-=head2 get-type(--> Int)
+=head3 get-type(--> Int)
 
 Returns the notification type.
 
-=head2 update(NotifyNotification $notification!, Str $summary, Str $body, Str $icon --> Bool)
+=head3 update(NotifyNotification $notification!, Str $summary, Str $body, Str $icon --> Bool)
 
 Modifies the messages of a notification which is already on screen.
 
-=head2 set-timeout(NotifyNotification $notification!, Int $timeout!)
+=head3 set-timeout(NotifyNotification $notification!, Int $timeout!)
 
 Sets the notification timeout. There are two available constants,
 B<NOTIFY_EXPIRES_DEFAULT> and B<NOTIFY_EXPIRES_NEVER>, when explicitly imported
 with B<use Desktop::Notify :constants;>.
 
 
-=head2 set-category(NotifyNotification $notification, Str $category!)
+=head3 set-category(NotifyNotification $notification, Str $category!)
 
 Sets the notification category (See the libnotify documentation).
 
-=head2 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
+=head3 set-urgency(NotifyNotification $notification, NotifyUrgency $urgency!)
 
 Sets the notification urgency. An B<enum NotifyUrgency <NotifyUrgencyLow NotifyUrgencyNormal NotifyUrgencyCritical>>
 is available when explicitly imported with B<use Desktop::Notify :constants;>.
 
-=head2 server-caps(--> Seq)
+=head3 server-caps(--> Seq)
 
 Reads server capabilities and returns a sequence.
 
-=head2 server-info(--> Hash)
+=head3 server-info(--> Hash)
 
 Reads the server info and returns an hash. The return value of the C function call is
 returned as the value of the B<return> key of the hash.
@@ -224,7 +277,7 @@ Since 'error' is a shared class member, if a program makes use of threading, its
 might be written by another thread before it's been read.
 In this case one can declare their own GError variables:
 
-=begin code
+=begin code :lang<raku>
 my $err = Desktop::Notify::GError.new;
 =end code
 
@@ -236,10 +289,10 @@ used instead of the object-wide one.
 This module requires the libnotify library to be installed. Please follow the
 instructions below based on your platform:
 
-=head2 Debian Linux
+=head2 Debian and Ubuntu
 
 =begin code
-sudo apt-get install libnotify4
+sudo apt install libnotify4
 =end code
 
 =head1 Installation
@@ -253,7 +306,7 @@ $ zef install Desktop::Notify
 To run the tests:
 
 =begin code
-$ prove -e "perl6 -Ilib"
+$ prove -e "raku -Ilib"
 =end code
 
 =head1 Note
