@@ -1,5 +1,7 @@
 Revision history for Math-Libgsl-Matrix
 
 {{$NEXT}}
+
+1.0.1  2022-11-24T09:53:11+01:00
     - Use zef ecosystem
     - Use Github CI
