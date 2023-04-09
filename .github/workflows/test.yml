@@ -25,7 +25,7 @@ jobs:
       - name: Install libnotify
         run: |
           sudo apt update
-          sudo apt install libnotify
+          sudo apt install libnotify4
       - name: Install Dependencies
         run: |
           zef install --/test --deps-only .
