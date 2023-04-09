@@ -1,4 +1,4 @@
-#!/usr/bin/env perl6
+use v6;
 
 unit class Desktop::Notify:ver<1.0.1>:auth<zef:FRITH>;
 

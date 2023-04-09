@@ -6,9 +6,9 @@ use Desktop::Notify :constants;
 my $notify = Desktop::Notify.new(app-name => 'myapp');
 # what about our server?
 say 'Server capabilities:';
-say $notify.server-caps.perl;
+say $notify.server-caps.raku;
 say 'Server info:';
-say $notify.server-info.perl;
+say $notify.server-info.raku;
 # create and display notification
 my $n = $notify.new-notification(:summary('Attention!'),
                                  :body('What just happened?'),
