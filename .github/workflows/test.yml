@@ -23,9 +23,9 @@ jobs:
         with:
           raku-version: ${{ matrix.raku-version }}
       - name: Install libnotify
-          run: |
-            sudo apt update
-            sudo apt install libnotify
+        run: |
+          sudo apt update
+          sudo apt install libnotify
       - name: Install Dependencies
         run: |
           zef install --/test --deps-only .
